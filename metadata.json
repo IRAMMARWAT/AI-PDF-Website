@@ -1,0 +1,6 @@
+{
+  "name": "DocuNova AI - All-in-One AI & PDF Workspace",
+  "description": "Next-generation PDF editing, intelligent OCR, AI document chat, conversion, and productivity suite.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
