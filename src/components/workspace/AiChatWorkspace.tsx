@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { ToolItem, ChatMessage } from '../../types';
 import { Dropzone } from '../common/Dropzone';
 import { extractTextQuick } from '../../services/pdfService';
+import { postJson } from '../../services/apiClient';
 import {
   Sparkles,
   Send,
@@ -80,20 +81,11 @@ export function AiChatWorkspace({ tool }: AiChatWorkspaceProps) {
     setIsAiResponding(true);
 
     try {
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: query,
-          documentText: docText,
-          history: messages.map((m) => ({ role: m.role, content: m.content })),
-        }),
+      const data = await postJson<{ response: string }>('/api/ai/chat', {
+        message: query,
+        documentText: docText,
+        history: messages.map((m) => ({ role: m.role, content: m.content })),
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to get answer from AI');
-      }
 
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
@@ -192,7 +184,7 @@ export function AiChatWorkspace({ tool }: AiChatWorkspaceProps) {
                   <Sparkles className="h-3.5 w-3.5" />
                 </div>
                 <span className="text-xs font-semibold text-slate-200">
-                  Grounded Document Intelligence (Gemini 2.5 Flash)
+                  Grounded Document Intelligence (Gemini 3 Flash)
                 </span>
               </div>
               <button

@@ -15,7 +15,36 @@ function getGenAI(): GoogleGenAI | null {
     console.warn('GEMINI_API_KEY is not set in environment variables');
     return null;
   }
-  return new GoogleGenAI({ apiKey });
+  return new GoogleGenAI({
+    apiKey,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build',
+      },
+    },
+  });
+}
+
+// Resilient helper to call Gemini with model fallback
+async function runGeminiContent(ai: GoogleGenAI, contents: any, config?: any): Promise<string> {
+  const modelsToTry = ['gemini-3.6-flash', 'gemini-3.8-flash'];
+  let lastError: any = null;
+
+  for (const model of modelsToTry) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents,
+        ...(config ? { config } : {}),
+      });
+      return response.text || '';
+    } catch (err: any) {
+      lastError = err;
+      console.warn(`Model ${model} failed, trying fallback:`, err.message || err);
+    }
+  }
+
+  throw lastError || new Error('Failed to generate response from Gemini AI');
 }
 
 // 1. Health check
@@ -24,6 +53,7 @@ apiRouter.get('/health', (_req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     aiReady: Boolean(process.env.GEMINI_API_KEY),
+    model: 'gemini-3.6-flash',
   });
 });
 
@@ -55,22 +85,19 @@ Rules:
 4. Do not fabricate or hallucinate document clauses, dates, financial figures, or names.
 5. Format your answer with clean Markdown, bullet points, and code/table blocks where helpful.`;
 
-    const chatHistoryFormatted = history.slice(-6).map((h: any) => `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`).join('\n\n');
+    const chatHistoryFormatted = history
+      .slice(-6)
+      .map((h: any) => `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`)
+      .join('\n\n');
 
     const prompt = `${systemPrompt}\n\n${docContext}\n\nChat History:\n${chatHistoryFormatted}\n\nUser Question: ${message}\n\nAssistant:`;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-    });
-
-    const responseText = result.text || 'No response generated.';
-    return res.json({ response: responseText });
+    const responseText = await runGeminiContent(ai, prompt);
+    return res.json({ response: responseText || 'No response generated.' });
   } catch (error: any) {
     console.error('Error in /api/ai/chat:', error);
-    return res.status(500).json({
-      error: error.message || 'Failed to process document chat request',
-    });
+    const msg = error?.message || 'Failed to process document chat request';
+    return res.status(500).json({ error: msg });
   }
 });
 
@@ -107,12 +134,8 @@ ${instruction}
 
 Deliver the output in polished, beautifully formatted Markdown with bold headings and structured lists.`;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-    });
-
-    return res.json({ summary: result.text || 'Unable to generate summary.' });
+    const summary = await runGeminiContent(ai, prompt);
+    return res.json({ summary: summary || 'Unable to generate summary.' });
   } catch (error: any) {
     console.error('Error in /api/ai/summarize:', error);
     return res.status(500).json({ error: error.message || 'Failed to summarize document' });
@@ -149,12 +172,8 @@ Document:
 ${text.slice(0, 35000)}
 """`;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-    });
-
-    let raw = result.text || '[]';
+    const textOutput = await runGeminiContent(ai, prompt);
+    let raw = textOutput || '[]';
     raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
     const quiz = JSON.parse(raw);
     return res.json({ quiz });
@@ -193,12 +212,8 @@ Document:
 ${text.slice(0, 35000)}
 """`;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-    });
-
-    let raw = result.text || '[]';
+    const textOutput = await runGeminiContent(ai, prompt);
+    let raw = textOutput || '[]';
     raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
     const flashcards = JSON.parse(raw);
     return res.json({ flashcards });
@@ -238,12 +253,8 @@ Document:
 ${text.slice(0, 45000)}
 """`;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-    });
-
-    return res.json({ guide: result.text || 'No guide generated.' });
+    const guide = await runGeminiContent(ai, prompt);
+    return res.json({ guide: guide || 'No guide generated.' });
   } catch (error: any) {
     console.error('Error in /api/ai/study-guide:', error);
     return res.status(500).json({ error: error.message || 'Failed to generate study guide' });
@@ -288,12 +299,8 @@ apiRouter.post('/ai/extract', async (req, res) => {
       return res.status(400).json({ error: 'Either text or imageBase64 must be provided' });
     }
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents,
-    });
-
-    return res.json({ result: result.text });
+    const output = await runGeminiContent(ai, contents);
+    return res.json({ result: output });
   } catch (error: any) {
     console.error('Error in /api/ai/extract:', error);
     return res.status(500).json({ error: error.message || 'Failed to extract data' });
@@ -328,12 +335,8 @@ apiRouter.post('/ai/writing', async (req, res) => {
     const instruction = toolPrompts[tool] || toolPrompts.rewrite;
     const prompt = `${instruction}\n\nInput:\n"""\n${input.slice(0, 30000)}\n"""`;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-    });
-
-    return res.json({ result: result.text || 'Unable to generate content.' });
+    const output = await runGeminiContent(ai, prompt);
+    return res.json({ result: output || 'Unable to generate content.' });
   } catch (error: any) {
     console.error('Error in /api/ai/writing:', error);
     return res.status(500).json({ error: error.message || 'Failed to process writing task' });

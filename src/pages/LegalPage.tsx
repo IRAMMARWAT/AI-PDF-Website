@@ -129,7 +129,7 @@ export function LegalPage({ type, onNavigate }: LegalPageProps) {
         <div className="prose prose-invert prose-indigo max-w-none text-slate-300 text-xs sm:text-sm space-y-6 leading-relaxed">
           <h2 className="text-lg font-bold text-white">1. Artificial Intelligence Accuracy Disclaimer</h2>
           <p>
-            DocuNova AI leverages modern Large Language Models (specifically Google Gemini 2.5 Flash) to generate summaries, answers, quizzes, and OCR extractions. While our retrieval-augmented pipelines are engineered to minimize hallucinations by grounding responses in provided document text, generative models may occasionally misinterpret nuances or complex figures.
+            DocuNova AI leverages modern Large Language Models (specifically Google Gemini 3 Flash) to generate summaries, answers, quizzes, and OCR extractions. While our retrieval-augmented pipelines are engineered to minimize hallucinations by grounding responses in provided document text, generative models may occasionally misinterpret nuances or complex figures.
           </p>
 
           <h2 className="text-lg font-bold text-white">2. Not Legal, Financial, or Medical Advice</h2>

@@ -32,7 +32,7 @@ export function PricingPage({ onNavigate }: PricingPageProps) {
       period: '/ month',
       desc: 'For researchers, legal counsels, students, and power professionals.',
       features: [
-        'Unlimited AI queries powered by Gemini 2.5 Flash',
+        'Unlimited AI queries powered by Gemini 3 Flash',
         'Up to 500MB per file with multi-doc comparisons',
         'Unlimited Batch OCR and Invoice Table exports',
         'Custom watermark presets & batch signing',

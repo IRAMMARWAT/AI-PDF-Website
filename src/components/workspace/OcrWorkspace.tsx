@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ToolItem } from '../../types';
 import { Dropzone } from '../common/Dropzone';
+import { postJson } from '../../services/apiClient';
 import {
   Scan,
   Copy,
@@ -62,20 +63,11 @@ export function OcrWorkspace({ tool }: OcrWorkspaceProps) {
 
       const mode = tool.id === 'invoice-ocr' ? 'invoice' : tool.id === 'table-ocr' ? 'table' : 'invoice';
 
-      const res = await fetch('/api/ai/extract', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          imageBase64,
-          text: !imageBase64 ? `Document: ${file.name}` : undefined,
-          mode,
-        }),
+      const data = await postJson<{ result: string }>('/api/ai/extract', {
+        imageBase64,
+        text: !imageBase64 ? `Document: ${file.name}` : undefined,
+        mode,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to extract text from scan');
-      }
 
       setExtractedText(data.result || 'No text recognized.');
     } catch (err: any) {

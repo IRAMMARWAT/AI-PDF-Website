@@ -72,7 +72,7 @@ export function HomePage({ onNavigate, onOpenSearch }: HomePageProps) {
           {/* Release kicker */}
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-800/60 bg-indigo-950/40 px-3.5 py-1 text-xs text-indigo-300 backdrop-blur-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span>DocuNova Engine 2.4 — Powered by Gemini 2.5 Flash</span>
+            <span>DocuNova Engine 3.0 — Powered by Gemini 3 Flash</span>
           </div>
 
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-white">

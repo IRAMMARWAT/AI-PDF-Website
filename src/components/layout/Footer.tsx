@@ -54,7 +54,7 @@ export function Footer({ onNavigate }: FooterProps) {
               <div>
                 <h4 className="text-sm font-semibold text-slate-200">High-Availability API</h4>
                 <p className="mt-1 text-xs text-slate-400">
-                  Powered by Gemini 2.5 Flash for sub-second responses and verified citations.
+                  Powered by Gemini 3 Flash for sub-second responses and verified citations.
                 </p>
               </div>
             </div>

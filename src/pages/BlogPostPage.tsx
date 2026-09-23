@@ -110,7 +110,7 @@ export function BlogPostPage({ postSlug, onNavigate }: BlogPostPageProps) {
         <div>
           <h3 className="text-sm font-semibold text-white">Experience AI Document Chat First-Hand</h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            Test Gemini 2.5 Flash document summarization and Q&A with zero retention.
+            Test Gemini 3 Flash document summarization and Q&A with zero retention.
           </p>
         </div>
         <button

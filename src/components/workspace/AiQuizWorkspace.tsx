@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ToolItem, QuizQuestion } from '../../types';
 import { Dropzone } from '../common/Dropzone';
 import { extractTextQuick } from '../../services/pdfService';
+import { postJson } from '../../services/apiClient';
 import {
   CheckCircle2,
   XCircle,
@@ -52,20 +53,11 @@ export function AiQuizWorkspace({ tool }: AiQuizWorkspaceProps) {
     setUserAnswers({});
 
     try {
-      const res = await fetch('/api/ai/quiz', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: inputText,
-          questionCount: 5,
-          difficulty: 'medium',
-        }),
+      const data = await postJson<{ quiz: QuizQuestion[] }>('/api/ai/quiz', {
+        text: inputText,
+        questionCount: 5,
+        difficulty: 'medium',
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to generate quiz');
-      }
 
       setQuizQuestions(data.quiz || []);
     } catch (err: any) {

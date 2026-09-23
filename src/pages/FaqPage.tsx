@@ -20,7 +20,7 @@ export function FaqPage({ onNavigate }: FaqPageProps) {
     },
     {
       q: 'Which AI model powers DocuNova AI?',
-      a: 'DocuNova AI is powered directly by Google Gemini 2.5 Flash, providing sub-second inference speeds, extensive multi-page context windows, and verifiable citation anchors.',
+      a: 'DocuNova AI is powered directly by Google Gemini 3 Flash, providing sub-second inference speeds, extensive multi-page context windows, and verifiable citation anchors.',
     },
     {
       q: 'Can DocuNova extract text from scanned images and photos?',

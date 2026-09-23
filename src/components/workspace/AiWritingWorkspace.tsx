@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ToolItem } from '../../types';
+import { postJson } from '../../services/apiClient';
 import {
   PenTool,
   Copy,
@@ -37,21 +38,12 @@ export function AiWritingWorkspace({ tool }: AiWritingWorkspaceProps) {
 
     try {
       const toolKey = tool.id.replace(/^ai-/, '');
-      const res = await fetch('/api/ai/writing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          input: inputContent,
-          tool: toolKey,
-          tone,
-          targetLanguage,
-        }),
+      const data = await postJson<{ result: string }>('/api/ai/writing', {
+        input: inputContent,
+        tool: toolKey,
+        tone,
+        targetLanguage,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to generate writing output');
-      }
 
       setOutputContent(data.result || 'No response generated.');
     } catch (err: any) {
@@ -137,7 +129,7 @@ export function AiWritingWorkspace({ tool }: AiWritingWorkspaceProps) {
             {isGenerating ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Refining with Gemini 2.5 Flash...</span>
+                <span>Refining with Gemini 3 Flash...</span>
               </>
             ) : (
               <>

@@ -266,7 +266,7 @@ export const ALL_TOOLS: ToolItem[] = [
     badge: 'AI Powered',
     icon: 'MessageSquare',
     seoTitle: 'Chat with PDF – AI Document Q&A with Citations | DocuNova AI',
-    metaDesc: 'Chat directly with your PDF documents using Gemini 2.5 Flash. Get grounded, truthful answers with direct page citations and zero hallucinations.',
+    metaDesc: 'Chat directly with your PDF documents using Gemini 3 Flash. Get grounded, truthful answers with direct page citations and zero hallucinations.',
     h1: 'Intelligent Conversational Document AI',
     howToSteps: [
       'Upload any PDF, report, research paper, or textbook.',
@@ -275,7 +275,7 @@ export const ALL_TOOLS: ToolItem[] = [
       'Receive instant, grounded answers with clickable source citations.',
     ],
     features: [
-      'Powered by Gemini 2.5 Flash intelligence',
+      'Powered by Gemini 3 Flash intelligence',
       'Page-referenced source attribution tags',
       'Strict anti-hallucination document grounding',
       'Export chat transcripts to Markdown or PDF',
@@ -647,7 +647,7 @@ export const BLOG_POSTS: BlogPost[] = [
       'With modern LLMs and vector indexing, the paradigm has shifted. Chatting with a PDF is not merely feeding megabytes of text into a context window. Production systems employ Retrieval-Augmented Generation (RAG).',
       'First, layout parsers segment pages, headers, footers, and tables into discrete semantically contiguous chunks. Next, embedding models generate high-dimensional vectors capturing conceptual meaning.',
       'When you ask a question such as "What was the Q3 operating margin in Europe?", the system performs cosine similarity search across vector indexes, retrieving only the 3 or 4 exact paragraphs that contain the answer.',
-      'Finally, an instruction-tuned model like Gemini 2.5 Flash synthesizes the response while attaching definitive citation footnotes (e.g. "[Page 14]"). This guarantees truthfulness and mitigates hallucinations.',
+      'Finally, an instruction-tuned model like Gemini 3 Flash synthesizes the response while attaching definitive citation footnotes (e.g. "[Page 14]"). This guarantees truthfulness and mitigates hallucinations.',
     ],
   },
   {

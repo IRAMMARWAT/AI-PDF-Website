@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ToolItem, Flashcard } from '../../types';
 import { Dropzone } from '../common/Dropzone';
 import { extractTextQuick } from '../../services/pdfService';
+import { postJson } from '../../services/apiClient';
 import {
   Sparkles,
   Loader2,
@@ -51,19 +52,10 @@ export function AiFlashcardWorkspace({ tool }: AiFlashcardWorkspaceProps) {
     setIsProcessing(true);
     setError(null);
     try {
-      const res = await fetch('/api/ai/flashcards', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: inputText,
-          count: 8,
-        }),
+      const data = await postJson<{ flashcards: Flashcard[] }>('/api/ai/flashcards', {
+        text: inputText,
+        count: 8,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to generate flashcards');
-      }
 
       setFlashcards(data.flashcards || []);
       setCurrentIndex(0);

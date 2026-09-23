@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ToolItem } from '../../types';
 import { Dropzone } from '../common/Dropzone';
 import { extractTextQuick, textToPDF, downloadUint8Array } from '../../services/pdfService';
+import { postJson } from '../../services/apiClient';
 import {
   Sparkles,
   Copy,
@@ -51,19 +52,10 @@ export function AiSummarizeWorkspace({ tool }: AiSummarizeWorkspaceProps) {
     setIsProcessing(true);
     setError(null);
     try {
-      const res = await fetch('/api/ai/summarize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: inputText,
-          mode,
-        }),
+      const data = await postJson<{ summary: string }>('/api/ai/summarize', {
+        text: inputText,
+        mode,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to generate summary');
-      }
 
       setSummary(data.summary);
     } catch (err: any) {
@@ -157,7 +149,7 @@ export function AiSummarizeWorkspace({ tool }: AiSummarizeWorkspaceProps) {
             {isProcessing ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Synthesizing Document with Gemini 2.5 Flash...</span>
+                <span>Synthesizing Document with Gemini 3 Flash...</span>
               </>
             ) : (
               <>
